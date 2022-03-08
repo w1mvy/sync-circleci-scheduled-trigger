@@ -7,9 +7,11 @@ import (
 )
 
 var configPath string
+var dryRun bool
 
 func main() {
 	flag.StringVar(&configPath, "config", ".circleci-schedule.json", "path of scheduled trigger json")
+	flag.BoolVar(&dryRun, "dryrun", false, "enabled dry-run mode")
 	flag.Parse()
 
 	config, err := LoadConfig(configPath)
@@ -20,7 +22,11 @@ func main() {
 	if err != nil {
 		fmt.Errorf("failed to client: %v", err)
 	}
-	_, err = Sync(context.Background(), client, config)
+
+	if dryRun {
+		client.Logger.Println("Execute as dry-run mode")
+	}
+	_, err = Sync(context.Background(), client, config, dryRun)
 	if err != nil {
 		fmt.Errorf("failed sync %v", err)
 	}

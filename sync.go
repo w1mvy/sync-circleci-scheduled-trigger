@@ -5,27 +5,31 @@ import (
 	"reflect"
 )
 
-func Sync(ctx context.Context, client *Client, config *Config) ([]*Item, error) {
+func Sync(ctx context.Context, client *Client, config *Config, dryRun bool) ([]*Item, error) {
 	items, err := client.GetAllSchedules(ctx, config.Project)
 	if err != nil {
 		return nil, err
 	}
 	var savedItem []*Item
 	for _, createSchedule := range FilterCreate(items, config.Schedules) {
-		item, err := client.CreateSchedule(ctx, config.Project, createSchedule)
-		if err != nil {
-			return nil, err
+		if !dryRun {
+			item, err := client.CreateSchedule(ctx, config.Project, createSchedule)
+			if err != nil {
+				return nil, err
+			}
+			savedItem = append(savedItem, item)
 		}
 		client.Logger.Printf("create schedule: %s\n", createSchedule.Name)
-		savedItem = append(savedItem, item)
 	}
 	for _, patchSchedule := range FilterPatch(items, config.Schedules) {
-		item, err := client.UpdateSchedule(ctx, patchSchedule.ScheduleId, patchSchedule)
-		if err != nil {
-			return nil, err
+		if !dryRun {
+			item, err := client.UpdateSchedule(ctx, patchSchedule.ScheduleId, patchSchedule)
+			if err != nil {
+				return nil, err
+			}
+			savedItem = append(savedItem, item)
 		}
 		client.Logger.Printf("update schedule: %s\n", patchSchedule.Schedule.Name)
-		savedItem = append(savedItem, item)
 	}
 	return savedItem, nil
 }
