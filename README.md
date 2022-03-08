@@ -10,6 +10,17 @@ $ go get -u github.com/w1mvy/sync-circleci-scheduled-trigger
 $ sync-circleci-scheduled-trigger --config=pathto/config.json
 ```
 
+How to create CircleCI API Token as below
+
+https://circleci.com/docs/ja/2.0/managing-api-tokens/
+
+## Option
+
+| key | default value | description |
+| --- | --- | --- |
+| `config` | `.circleci-schedule.json` | path of scheduled trigger config file |
+| `dryrun` | `false` | execute as dry-run mode |
+
 ## Config
 
 | key | description |
