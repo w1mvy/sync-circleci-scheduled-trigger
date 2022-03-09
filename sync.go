@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"reflect"
 )
 
@@ -19,7 +20,7 @@ func Sync(ctx context.Context, client *Client, config *Config, dryRun bool) ([]*
 			}
 			savedItem = append(savedItem, item)
 		}
-		client.Logger.Printf("create schedule: %s\n", createSchedule.Name)
+		fmt.Printf("create schedule: %s\n", createSchedule.Name)
 	}
 	for _, patchSchedule := range FilterPatch(items, config.Schedules) {
 		if !dryRun {
@@ -29,7 +30,7 @@ func Sync(ctx context.Context, client *Client, config *Config, dryRun bool) ([]*
 			}
 			savedItem = append(savedItem, item)
 		}
-		client.Logger.Printf("update schedule: %s\n", patchSchedule.Schedule.Name)
+		fmt.Printf("update schedule: %s", patchSchedule.Schedule.Name)
 	}
 	return savedItem, nil
 }

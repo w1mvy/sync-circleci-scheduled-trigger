@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -18,7 +17,6 @@ type Client struct {
 	BaseURL    *url.URL
 	HTTPClient *http.Client
 	Token      string
-	Logger     *log.Logger
 }
 
 type Item struct {
@@ -61,7 +59,6 @@ func NewClient() (*Client, error) {
 		BaseURL:    &url.URL{Host: "circleci.com", Scheme: "https", Path: "/api/v2/"},
 		HTTPClient: http.DefaultClient,
 		Token:      token,
-		Logger:     log.New(os.Stderr, "", log.LstdFlags),
 	}, nil
 }
 

@@ -17,17 +17,17 @@ func main() {
 
 	config, err := LoadConfig(configPath)
 	if err != nil {
-		fmt.Printf("failed to load config file: %s\n", err)
+		fmt.Printf("failed to load config file: %v\n", err)
 		os.Exit(1)
 	}
 	client, err := NewClient()
 	if err != nil {
-		fmt.Printf("failed to create client: %s\n", err)
+		fmt.Printf("failed to create client: %v\n", err)
 		os.Exit(1)
 	}
 
 	if dryRun {
-		client.Logger.Println("Execute as dry-run mode")
+		fmt.Println("Execute as dry-run mode")
 	}
 	_, err = Sync(context.Background(), client, config, dryRun)
 	if err != nil {
