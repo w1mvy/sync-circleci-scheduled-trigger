@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"os"
 )
 
 var configPath string
@@ -16,11 +17,13 @@ func main() {
 
 	config, err := LoadConfig(configPath)
 	if err != nil {
-		fmt.Errorf("failed to load config file: %v", err)
+		fmt.Printf("failed to load config file: %s\n", err)
+		os.Exit(1)
 	}
 	client, err := NewClient()
 	if err != nil {
-		fmt.Errorf("failed to client: %v", err)
+		fmt.Printf("failed to create client: %s\n", err)
+		os.Exit(1)
 	}
 
 	if dryRun {
@@ -28,6 +31,7 @@ func main() {
 	}
 	_, err = Sync(context.Background(), client, config, dryRun)
 	if err != nil {
-		fmt.Errorf("failed sync %v", err)
+		fmt.Printf("failed sync %v\n", err)
+		os.Exit(1)
 	}
 }

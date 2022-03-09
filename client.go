@@ -54,6 +54,9 @@ type GetScheduleResponse struct {
 
 func NewClient() (*Client, error) {
 	token := os.Getenv("CIRCLECI_TOKEN")
+	if len(token) == 0 {
+		return nil, fmt.Errorf("must set env `CIRCLECI_TOKEN`")
+	}
 	return &Client{
 		BaseURL:    &url.URL{Host: "circleci.com", Scheme: "https", Path: "/api/v2/"},
 		HTTPClient: http.DefaultClient,
