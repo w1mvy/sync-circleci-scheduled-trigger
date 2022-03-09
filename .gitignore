@@ -1,2 +1,4 @@
 .envrc
 .circleci-schedule.json
+
+dist/
