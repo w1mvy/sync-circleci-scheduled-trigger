@@ -41,8 +41,8 @@ type PatchSchedule struct {
 
 func FilterPatch(items []*Item, schedules []*Schedule) []*PatchSchedule {
 	var patchSchedules []*PatchSchedule
-	for _, item := range items {
-		for _, schedule := range schedules {
+	for _, schedule := range schedules {
+		for _, item := range items {
 			if IsMatch(item, schedule) && DiffExist(item, schedule) {
 				patchSchedules = append(patchSchedules, &PatchSchedule{ScheduleId: item.ID, Schedule: schedule})
 				break
@@ -54,8 +54,11 @@ func FilterPatch(items []*Item, schedules []*Schedule) []*PatchSchedule {
 
 func FilterCreate(items []*Item, schedules []*Schedule) []*Schedule {
 	var createSchedules []*Schedule
-	for _, item := range items {
-		for _, schedule := range schedules {
+	if len(items) == 0 {
+		return schedules
+	}
+	for _, schedule := range schedules {
+		for _, item := range items {
 			if !IsMatch(item, schedule) {
 				createSchedules = append(createSchedules, schedule)
 				break
