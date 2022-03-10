@@ -24,7 +24,7 @@ func Sync(ctx context.Context, client *Client, config *Config, dryRun bool) ([]*
 	}
 	for _, patchSchedule := range FilterPatch(items, config.Schedules) {
 		if !dryRun {
-			item, err := client.UpdateSchedule(ctx, patchSchedule.ScheduleId, patchSchedule)
+			item, err := client.UpdateSchedule(ctx, patchSchedule.ScheduleId, patchSchedule.Schedule)
 			if err != nil {
 				return nil, err
 			}

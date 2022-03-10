@@ -126,7 +126,7 @@ func (c *Client) CreateSchedule(ctx context.Context, project string, body interf
 }
 
 func (c *Client) UpdateSchedule(ctx context.Context, scheduleId string, body interface{}) (*Item, error) {
-	spath := fmt.Sprintf("project/gh/schedule/%s", scheduleId)
+	spath := fmt.Sprintf("schedule/%s", scheduleId)
 	req, err := c.newRequest(ctx, "PATCH", spath, body)
 	if err != nil {
 		return nil, err
