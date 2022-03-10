@@ -4,6 +4,60 @@ import (
 	"testing"
 )
 
+func TestFilterCreate_noexist(t *testing.T) {
+	items := []*Item{
+		{
+			Name: "test1",
+		},
+		{
+			Name: "test2",
+		},
+		{
+			Name: "test3",
+		},
+	}
+	schedules := []*Schedule{
+		{
+			Name: "test1",
+		},
+		{
+			Name: "test2",
+		},
+	}
+
+	create := FilterCreate(items, schedules)
+	if len(create) != 0 {
+		t.Errorf("FilterCreate expected to return empty array: returns %v", create)
+	}
+}
+
+func TestFilterCreate_exist(t *testing.T) {
+	items := []*Item{
+		{
+			Name: "test1",
+		},
+		{
+			Name: "test3",
+		},
+	}
+	schedules := []*Schedule{
+		{
+			Name: "test1",
+		},
+		{
+			Name: "test2",
+		},
+		{
+			Name: "test2",
+		},
+	}
+
+	create := FilterCreate(items, schedules)
+	if create[0].Name != "test2" {
+		t.Errorf("FilterCreate expected to return test2 : returns %v", create[0].Name)
+	}
+}
+
 func TestFilterPatch_noexist(t *testing.T) {
 	items := []*Item{
 		{

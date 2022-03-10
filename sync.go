@@ -59,11 +59,15 @@ func FilterCreate(items []*Item, schedules []*Schedule) []*Schedule {
 		return schedules
 	}
 	for _, schedule := range schedules {
+		found := false
 		for _, item := range items {
-			if !IsMatch(item, schedule) {
-				createSchedules = append(createSchedules, schedule)
+			if IsMatch(item, schedule) {
+				found = true
 				break
 			}
+		}
+		if !found {
+			createSchedules = append(createSchedules, schedule)
 		}
 	}
 	return createSchedules
