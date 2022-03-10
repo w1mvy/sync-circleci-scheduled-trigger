@@ -24,7 +24,7 @@ func Sync(ctx context.Context, client *Client, config *Config, dryRun bool) ([]*
 	}
 	for _, patchSchedule := range FilterPatch(items, config.Schedules) {
 		if !dryRun {
-			item, err := client.UpdateSchedule(ctx, patchSchedule.ScheduleId, patchSchedule)
+			item, err := client.UpdateSchedule(ctx, patchSchedule.ScheduleId, patchSchedule.Schedule)
 			if err != nil {
 				return nil, err
 			}
@@ -59,11 +59,15 @@ func FilterCreate(items []*Item, schedules []*Schedule) []*Schedule {
 		return schedules
 	}
 	for _, schedule := range schedules {
+		found := false
 		for _, item := range items {
-			if !IsMatch(item, schedule) {
-				createSchedules = append(createSchedules, schedule)
+			if IsMatch(item, schedule) {
+				found = true
 				break
 			}
+		}
+		if !found {
+			createSchedules = append(createSchedules, schedule)
 		}
 	}
 	return createSchedules

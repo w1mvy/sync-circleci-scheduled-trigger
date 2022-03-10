@@ -172,7 +172,7 @@ func TestUpdateSchedule(t *testing.T) {
 		BaseURL:    url,
 		HTTPClient: http.DefaultClient,
 	}
-	mux.HandleFunc(fmt.Sprintf("/project/gh/schedule/%s", scheduleId), func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc(fmt.Sprintf("/schedule/%s", scheduleId), func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != "PATCH" {
 			w.WriteHeader(http.StatusMethodNotAllowed)
 			return
