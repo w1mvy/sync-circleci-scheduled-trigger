@@ -2,6 +2,10 @@
 
 sync-circleci-scheduled-triggeris a command-line tool to manage triggers for circleci's scheduled pipeline
 
+The same trigger is determined by matching the trigger name, changed name will be treated new trigger.
+
+Deletion is not supported now.
+
 ## Usage
 
 ```
