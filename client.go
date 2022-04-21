@@ -50,6 +50,10 @@ type GetScheduleResponse struct {
 	NextPageToken string  `json:"next_page_token"`
 }
 
+type DeleteResponse struct {
+	Message string `json:"message"`
+}
+
 func NewClient() (*Client, error) {
 	token := os.Getenv("CIRCLECI_TOKEN")
 	if len(token) == 0 {
@@ -142,4 +146,23 @@ func (c *Client) UpdateSchedule(ctx context.Context, scheduleId string, body int
 		return nil, err
 	}
 	return resp, nil
+}
+
+func (c *Client) DeleteSchedule(ctx context.Context, scheduleId string) (string, error) {
+	spath := fmt.Sprintf("schedule/%s", scheduleId)
+	req, err := c.newRequest(ctx, "DELETE", spath, nil)
+	if err != nil {
+		return "", err
+	}
+
+	res, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return "", err
+	}
+
+	var resp DeleteResponse
+	if err := decodeBody(res, &resp); err != nil {
+		return "", err
+	}
+	return resp.Message, nil
 }

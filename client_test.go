@@ -236,3 +236,38 @@ func TestUpdateSchedule(t *testing.T) {
 		t.Errorf("expected id to be %s, but was %s", "497f6eca-6276-4993-bfeb-53cbbbba6f08", resp.ID)
 	}
 }
+
+func TestDeleteSchedule(t *testing.T) {
+	ctx := context.Background()
+	mux = http.NewServeMux()
+	server = httptest.NewServer(mux)
+	defer server.Close()
+	url, err := url.Parse(server.URL)
+	if err != nil {
+		panic(fmt.Sprintf("failed to parse : %s", server.URL))
+	}
+	scheduleId := "497f6eca-6276-4993-bfeb-53cbbbba6f08"
+	client = &Client{
+		BaseURL:    url,
+		HTTPClient: http.DefaultClient,
+	}
+	mux.HandleFunc(fmt.Sprintf("/schedule/%s", scheduleId), func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "DELETE" {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			return
+		}
+		fmt.Fprintf(w, `
+		{
+		  "message": "test message"
+		}
+		`)
+	})
+	resp, err := client.DeleteSchedule(ctx, scheduleId)
+	if err != nil {
+		t.Fatalf("Client.GetAllSchedules returns error %v", err)
+	}
+
+	if resp != "test message" {
+		t.Errorf("expected id to be %s, but was %s", "test message", resp)
+	}
+}
