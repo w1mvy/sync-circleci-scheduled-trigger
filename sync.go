@@ -6,7 +6,7 @@ import (
 	"reflect"
 )
 
-func Sync(ctx context.Context, client *Client, config *Config, dryRun bool) ([]*Item, error) {
+func Sync(ctx context.Context, client *Client, config *Config, dryRun bool, forceSync bool) ([]*Item, error) {
 	items, err := client.GetAllSchedules(ctx, config.Project)
 	if err != nil {
 		return nil, err
@@ -31,6 +31,18 @@ func Sync(ctx context.Context, client *Client, config *Config, dryRun bool) ([]*
 			savedItem = append(savedItem, item)
 		}
 		fmt.Printf("update schedule: %s", patchSchedule.Schedule.Name)
+	}
+	if forceSync {
+		for _, deleteItem := range FilterDelete(items, config.Schedules) {
+			if !dryRun {
+				message, err := client.DeleteSchedule(ctx, deleteItem.ID)
+				if err != nil {
+					return nil, err
+				}
+				fmt.Printf("delete schedule message: %s\n", message)
+			}
+			fmt.Printf("delete schedule: %s\n", deleteItem.Name)
+		}
 	}
 	return savedItem, nil
 }
@@ -71,6 +83,23 @@ func FilterCreate(items []*Item, schedules []*Schedule) []*Schedule {
 		}
 	}
 	return createSchedules
+}
+
+func FilterDelete(items []*Item, schedules []*Schedule) []*Item {
+	var deleteItems []*Item
+	for _, item := range items {
+		found := false
+		for _, schedule := range schedules {
+			if IsMatch(item, schedule) {
+				found = true
+				break
+			}
+		}
+		if !found {
+			deleteItems = append(deleteItems, item)
+		}
+	}
+	return deleteItems
 }
 
 // always diff exist when schedule.AttributionActor not system

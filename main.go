@@ -9,10 +9,12 @@ import (
 
 var configPath string
 var dryRun bool
+var forceSync bool
 
 func main() {
 	flag.StringVar(&configPath, "config", ".circleci-schedule.json", "path of scheduled trigger json")
 	flag.BoolVar(&dryRun, "dryrun", false, "enabled dry-run mode")
+	flag.BoolVar(&forceSync, "forcesync", false, "delete schedules that does not exist in config. judge by only name match.")
 	flag.Parse()
 
 	config, err := LoadConfig(configPath)
@@ -29,7 +31,10 @@ func main() {
 	if dryRun {
 		fmt.Println("Execute as dry-run mode")
 	}
-	_, err = Sync(context.Background(), client, config, dryRun)
+	if forceSync {
+		fmt.Println("Execute as force-sync mode")
+	}
+	_, err = Sync(context.Background(), client, config, dryRun, forceSync)
 	if err != nil {
 		fmt.Printf("failed sync %v\n", err)
 		os.Exit(1)

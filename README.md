@@ -4,8 +4,6 @@ sync-circleci-scheduled-triggeris a command-line tool to manage triggers for cir
 
 The same trigger is determined by matching the trigger name, changed name will be treated new trigger.
 
-Deletion is not supported now.
-
 ## Usage
 
 ```
@@ -24,6 +22,7 @@ https://circleci.com/docs/ja/2.0/managing-api-tokens/
 | --- | --- | --- |
 | `config` | `.circleci-schedule.json` | path of scheduled trigger config file |
 | `dryrun` | `false` | execute as dry-run mode |
+| `forcesync` | `false` | delete schedules that does not exist in config. judge by only name match. |
 
 ## Config
 
