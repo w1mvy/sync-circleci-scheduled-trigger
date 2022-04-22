@@ -223,6 +223,166 @@ func TestFilterPatch_exists(t *testing.T) {
 	}
 }
 
+func TestFilterDelete_noexist(t *testing.T) {
+	items := []*Item{
+		{
+			Name:        "test1",
+			Description: "desc",
+			Parameters: Parameters{
+				"testA": "a",
+				"testB": "b",
+			},
+			Actor: Actor{
+				Login: "system-actor",
+				Name:  "Scheduled",
+			},
+		},
+		{
+			Name:        "test2",
+			Description: "desc",
+			Parameters: Parameters{
+				"testA": "a",
+				"testB": "b",
+			},
+			Actor: Actor{
+				Login: "system-actor",
+				Name:  "Scheduled",
+			},
+		},
+	}
+	schedules := []*Schedule{
+		{
+			Name:        "test1",
+			Description: "desc",
+			Parameters: Parameters{
+				"testA": "a",
+				"testB": "b",
+			},
+			AttributionActor: "system",
+		},
+		{
+			Name:        "test2",
+			Description: "desc",
+			Parameters: Parameters{
+				"testA": "a",
+				"testB": "b",
+			},
+			AttributionActor: "system",
+		},
+		{
+			Name:        "test3",
+			Description: "desc",
+			Parameters: Parameters{
+				"testA": "a",
+				"testB": "b",
+			},
+			AttributionActor: "system",
+		},
+	}
+
+	deleteItems := FilterDelete(items, schedules)
+	if len(deleteItems) != 0 {
+		t.Errorf("FilterDelete expected to return empty array: returns %v", deleteItems)
+	}
+}
+
+func TestFilterDelete_exists(t *testing.T) {
+	items := []*Item{
+		{
+			ID:          "not-exist-id-from-schedules",
+			Name:        "not-exist-id-from-schedules",
+			Description: "desc",
+			Parameters: Parameters{
+				"testA": "a",
+				"testB": "b",
+			},
+			Actor: Actor{
+				Login: "system-actor",
+				Name:  "Scheduled",
+			},
+		},
+		{
+			ID:          "test2",
+			Name:        "test2",
+			Description: "desc",
+			Parameters: Parameters{
+				"testA": "a",
+				"testB": "b",
+			},
+			Actor: Actor{
+				Login: "system-actor",
+				Name:  "Scheduled",
+			},
+		},
+		{
+			ID:          "test3-diff-from-schedule",
+			Name:        "test3-diff-from-schedule",
+			Description: "nodiff",
+			Parameters: Parameters{
+				"testA": "a",
+				"testB": "b",
+			},
+			Actor: Actor{
+				Login: "system-actor",
+				Name:  "Scheduled",
+			},
+		},
+		{
+			ID:          "test4",
+			Name:        "test4",
+			Description: "schedule",
+			Parameters: Parameters{
+				"testA": "a",
+				"testB": "b",
+			},
+			Actor: Actor{
+				Login: "system-actor",
+				Name:  "Scheduled",
+			},
+		},
+	}
+	schedules := []*Schedule{
+		{
+			Name:        "test2",
+			Description: "desc",
+			Parameters: Parameters{
+				"testA": "a",
+				"testB": "b",
+			},
+			AttributionActor: "w1mvy",
+		},
+		{
+			Name:        "test3",
+			Description: "nodiff",
+			Parameters: Parameters{
+				"testA": "a",
+				"testB": "b",
+			},
+			AttributionActor: "system",
+		},
+		{
+			Name:        "test4",
+			Description: "schedule",
+			Parameters: Parameters{
+				"testA": "a",
+				"testB": "b",
+			},
+			AttributionActor: "system",
+		},
+	}
+
+	deleteItems := FilterDelete(items, schedules)
+	if len(deleteItems) != 2 {
+		t.Errorf("FilterDelete expected to return two elements: returns %v", deleteItems)
+	}
+	if deleteItems[0].ID != "not-exist-id-from-schedules" {
+		t.Errorf("FilterDelete expected to return two elements: returns %v", deleteItems)
+	}
+	if deleteItems[1].ID != "test3-diff-from-schedule" {
+		t.Errorf("FilterDelete expected to return two elements: returns %v", deleteItems)
+	}
+}
+
 func TestIsMatch_notmatch(t *testing.T) {
 	item := &Item{Name: "test"}
 	attr := &Schedule{Name: "notmatch"}
